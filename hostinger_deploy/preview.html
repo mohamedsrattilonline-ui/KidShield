@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>KidShield Interactive Simulation | تجربة تفاعلية</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.08); opacity: 0.4; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .pulse-ring {
+      animation: pulse-ring 2s infinite ease-in-out;
+    }
+    @keyframes alert-flash {
+      0%, 100% { background-color: #fee2e2; border-color: #ef4444; }
+      50% { background-color: #fecaca; border-color: #b91c1c; }
+    }
+    .alert-flash {
+      animation: alert-flash 1s infinite;
+    }
+    .phone-container {
+      width: 370px;
+      height: 760px;
+      border-radius: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased p-4">
+
+  <!-- Header & Global Controls -->
+  <header class="max-w-6xl mx-auto mb-6 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl">
+        🛡️
+      </div>
+      <div>
+        <h1 class="text-lg font-bold text-slate-900" id="headerTitle">KidShield — تجربة المحاكاة التفاعلية (Web Safety & Activity)</h1>
+        <p class="text-xs text-slate-500" id="headerSubtitle">تحكم اختياري من الأب + تتبع نشاط المواقع المفتوحة لحظياً (Live Sync)</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <button onclick="toggleLanguage()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-slate-300">
+        🌐 <span id="langBtnText">English</span>
+      </button>
+      <button onclick="resetSimulation()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition flex items-center gap-1 border border-slate-300">
+        🔄 <span id="resetBtnText">إعادة تعيين</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Interactive Dual Device Sandbox -->
+  <main class="max-w-6xl mx-auto flex flex-wrap justify-center items-start gap-8">
+
+    <!-- ========================================== -->
+    <!-- DEVICE 1: PARENT MODE (لوحة تحكم الأب) -->
+    <!-- ========================================== -->
+    <div class="flex flex-col items-center">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="w-3 h-3 rounded-full bg-blue-600"></span>
+        <span class="text-sm font-bold text-slate-700" id="parentDeviceLabel">📱 لوحة تحكم الأب (Parent Dashboard)</span>
+      </div>
+
+      <div class="phone-container bg-white border-8 border-slate-800 flex flex-col overflow-hidden relative">
+        <!-- Phone Speaker Notch -->
+        <div class="w-full bg-slate-800 py-1 flex justify-center">
+          <div class="w-20 h-3 bg-slate-900 rounded-full"></div>
+        </div>
+
+        <!-- Parent App Bar -->
+        <div class="bg-blue-600 text-white px-4 py-3 flex items-center justify-between shadow">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🛡️</span>
+            <span class="font-bold text-sm" id="parentAppTitle">حماية الطفل | الأب</span>
+          </div>
+          <span class="text-xs bg-blue-700 px-2 py-0.5 rounded-full">Online</span>
+        </div>
+
+        <!-- Parent Content Body -->
+        <div class="flex-1 overflow-y-auto p-3 space-y-3 bg-slate-50">
+
+          <!-- SOS Banner if Triggered -->
+          <div id="parentSosBanner" class="hidden alert-flash border-2 rounded-xl p-3 shadow-md">
+            <div class="flex items-center gap-2 text-red-700 font-bold text-sm mb-1">
+              <span class="text-xl">🚨</span>
+              <span id="sosBannerTitle">إنذار استغاثة طارئ (SOS)!</span>
+            </div>
+            <p class="text-xs text-red-800 mb-2" id="sosBannerDesc">أرسلت سارة نداء استغاثة عاجل مع موقعها الجغرافي!</p>
+            <div class="bg-white/80 p-2 rounded text-xs font-mono text-slate-700 mb-2 flex justify-between">
+              <span>GPS: 30.0444, 31.2357</span>
+              <span>🔋 85%</span>
+            </div>
+            <button onclick="dismissSosAlert()" class="w-full py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg shadow">
+              <span id="silenceSirenBtn">إيقاف صفارة الإنذار وتأكيد الاستلام</span>
+            </button>
+          </div>
+
+          <!-- Child Card -->
+          <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
+                  👧
+                </div>
+                <div>
+                  <h4 class="font-bold text-sm text-slate-800">Sarah (سارة)</h4>
+                  <p class="text-xs text-slate-500">Samsung Galaxy A53</p>
+                </div>
+              </div>
+              <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-bold">متصل الآن</span>
+            </div>
+
+            <!-- Telemetry Badges -->
+            <div class="grid grid-cols-2 gap-2 my-2 text-xs">
+              <div class="bg-slate-100 p-2 rounded-lg flex items-center gap-2">
+                <span class="text-base">🔋</span>
+                <div>
+                  <span class="text-slate-400 block text-[10px]">البطارية</span>
+                  <span class="font-bold text-slate-700">85%</span>
+                </div>
+              </div>
+              <div class="bg-slate-100 p-2 rounded-lg flex items-center gap-2">
+                <span class="text-base">📍</span>
+                <div>
+                  <span class="text-slate-400 block text-[10px]">الموقع</span>
+                  <span class="font-bold text-slate-700">القاهرة (حي الأمان)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rules: Bedtime Lock Toggle & Web Filtering Option -->
+            <div class="pt-2 border-t border-slate-100 space-y-2 text-xs">
+              <!-- Bedtime Lock Toggle -->
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-700" id="bedtimeLockLabel">🌙 قفل وقت النوم (Bedtime Lock):</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="bedtimeToggle" onchange="toggleBedtimeLock(this.checked)" class="sr-only peer">
+                  <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+
+              <!-- Web Safety & Adult Filter Toggle (اختياري من لوحة الأب) -->
+              <div class="flex items-center justify-between p-2 bg-teal-50 rounded-lg border border-teal-200">
+                <div>
+                  <span class="font-bold text-teal-900 block" id="adultFilterLabel">🛡️ حظر المواقع غير اللائقة والإباحية:</span>
+                  <span class="text-[10px] text-teal-700" id="adultFilterSub">تفعيل اختياري في أي وقت</span>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="webFilterToggle" onchange="toggleWebFilter(this.checked)" class="sr-only peer">
+                  <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-teal-600"></div>
+                </label>
+
+              </div>
+
+              <!-- Instant Lock Toggle -->
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-700" id="instantLockLabel">🔒 القفل الفوري للجهاز:</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="instantLockToggle" onchange="toggleInstantLock(this.checked)" class="sr-only peer">
+                  <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Web Activity Log Section (سجل التصفح) -->
+          <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-sm text-xs">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-800 flex items-center gap-1.5" id="webLogTitle">
+                <span>🌐</span> <span>سجل نشاط المواقع المفتوحة</span>
+              </span>
+              <span class="text-[11px] text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-md" id="sitesCountBadge">4 مواقع</span>
+            </div>
+
+            <!-- List of Visited Websites -->
+            <div id="webLogList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+              <!-- Item 1 -->
+              <div class="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">▶️</span>
+                  <div>
+                    <span class="font-bold text-slate-800 block">youtube.com</span>
+                    <span class="text-[10px] text-slate-500">فيديوهات علمية للأطفال</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded">مسموح</span>
+                  <span class="block text-[9px] text-slate-400 mt-0.5">منذ 15 دقيقة</span>
+                </div>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">📖</span>
+                  <div>
+                    <span class="font-bold text-slate-800 block">wikipedia.org</span>
+                    <span class="text-[10px] text-slate-500">مقال المجموعة الشمسية</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded">مسموح</span>
+                  <span class="block text-[9px] text-slate-400 mt-0.5">منذ 38 دقيقة</span>
+                </div>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">🎓</span>
+                  <div>
+                    <span class="font-bold text-slate-800 block">khanacademy.org</span>
+                    <span class="text-[10px] text-slate-500">تمارين الرياضيات</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded">مسموح</span>
+                  <span class="block text-[9px] text-slate-400 mt-0.5">منذ 55 دقيقة</span>
+                </div>
+              </div>
+
+              <!-- Item 4 (Blocked Attempt) -->
+              <div class="p-2 rounded-lg bg-red-50 border border-red-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-base">🚫</span>
+                  <div>
+                    <span class="font-bold text-red-700 block">unknown-adult-site.com</span>
+                    <span class="text-[10px] text-red-500">محتوى غير لائق</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] bg-red-100 text-red-700 font-bold px-1.5 py-0.5 rounded">محظور ⚠️</span>
+                  <span class="block text-[9px] text-slate-400 mt-0.5">منذ ساعتين</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- DEVICE 2: CHILD MODE (جهاز الطفل) -->
+    <!-- ========================================== -->
+    <div class="flex flex-col items-center">
+      <div class="flex items-center gap-2 mb-2">
+        <span class="w-3 h-3 rounded-full bg-green-600"></span>
+        <span class="text-sm font-bold text-slate-700" id="childDeviceLabel">📱 جهاز الطفل (Child Device)</span>
+      </div>
+
+      <div class="phone-container bg-white border-8 border-slate-800 flex flex-col overflow-hidden relative">
+        <!-- Phone Speaker Notch -->
+        <div class="w-full bg-slate-800 py-1 flex justify-center">
+          <div class="w-20 h-3 bg-slate-900 rounded-full"></div>
+        </div>
+
+        <!-- Child App Bar -->
+        <div class="bg-green-600 text-white px-4 py-3 flex items-center justify-between shadow">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🛡️</span>
+            <span class="font-bold text-sm" id="childAppTitle">KidShield | جهاز الطفل</span>
+          </div>
+          <span class="text-xs bg-green-700 px-2 py-0.5 rounded-full" id="shieldStateBadge">محمي 🔒</span>
+        </div>
+
+        <!-- Bedtime Locked Fullscreen Overlay -->
+        <div id="childLockOverlay" class="hidden absolute inset-0 bg-slate-900 text-white z-50 flex flex-col items-center justify-center p-6 text-center">
+          <div class="w-20 h-20 rounded-full bg-purple-900/50 border-2 border-purple-400 flex items-center justify-center text-4xl mb-4">
+            🌙
+          </div>
+          <h3 class="text-lg font-bold mb-2 text-purple-200" id="lockedTitle">الجهاز مقفل (وقت النوم)</h3>
+          <p class="text-xs text-slate-400 mb-6 leading-relaxed" id="lockedDesc">
+            هذا الجهاز مقفل حالياً بموجب إعدادات الأمان الأبوية. حان وقت النوم أو الدراسة!
+          </p>
+          <div class="p-3 bg-slate-800 rounded-xl border border-slate-700 text-xs text-slate-300 w-full mb-4">
+            📞 مكالمات الطوارئ متاحة دائماً (911 / 112 / 122)
+          </div>
+          <button onclick="toggleBedtimeLock(false)" class="text-xs text-purple-400 hover:underline">
+            (إلغاء القفل من لوحة الأب للعودة)
+          </button>
+        </div>
+
+        <!-- Child Content Body -->
+        <div class="flex-1 overflow-y-auto p-4 flex flex-col justify-between bg-slate-50">
+
+          <!-- Active Protection Shield Badge -->
+          <div class="bg-green-50 border border-green-200 rounded-2xl p-2.5 flex items-center gap-3 shadow-sm">
+            <div class="w-9 h-9 rounded-full bg-green-600 text-white flex items-center justify-center text-lg">
+              ✓
+            </div>
+            <div>
+              <h4 class="font-bold text-xs text-green-900" id="protectionBadgeTitle">درع الحماية نشط ومباشر</h4>
+              <p class="text-[11px] text-green-700" id="protectionBadgeDesc">الموقع الجغرافي ونشاط التصفح متزامنان مع الأب.</p>
+            </div>
+          </div>
+
+          <!-- Browser URL Simulation Box -->
+          <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm my-2">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
+                <span>🌐</span> <span id="browserBoxTitle">محاكاة متصفح هاتف الطفل:</span>
+              </span>
+              <span class="text-[10px] text-slate-400">Chrome Simulator</span>
+            </div>
+            <div class="flex gap-1.5">
+              <input type="text" id="browserInputUrl" placeholder="اكتب موقعاً (مثال: youtube.com أو موقع غير لائق)" class="flex-1 px-2.5 py-1.5 bg-slate-100 border border-slate-300 rounded-lg text-xs">
+              <button onclick="simulateVisitWebsite()" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700">
+                فتح
+              </button>
+            </div>
+            <div class="flex gap-1.5 mt-2">
+              <button onclick="quickTestSite('youtube.com', false)" class="text-[10px] bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded text-slate-600 border">
+                + youtube.com
+              </button>
+              <button onclick="quickTestSite('wikipedia.org', false)" class="text-[10px] bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded text-slate-600 border">
+                + wikipedia.org
+              </button>
+              <button onclick="quickTestSite('adult-restricted-content.com', true)" class="text-[10px] bg-red-50 hover:bg-red-100 px-2 py-0.5 rounded text-red-700 border border-red-200">
+                + تجربة موقع غير لائق
+              </button>
+            </div>
+            <div id="browserNotice" class="hidden mt-2 p-2 rounded text-[11px]"></div>
+          </div>
+
+          <!-- Prominent Emergency SOS Button -->
+          <div class="flex flex-col items-center justify-center my-3">
+            <div class="relative flex items-center justify-center">
+              <div class="absolute w-40 h-40 rounded-full bg-red-500/20 pulse-ring"></div>
+              <button onclick="triggerChildSos()" class="w-32 h-32 rounded-full bg-gradient-to-br from-red-500 via-red-600 to-red-800 text-white shadow-2xl flex flex-col items-center justify-center active:scale-95 transition-transform border-4 border-red-300/60 z-10">
+                <span class="text-2xl mb-1">⚠️</span>
+                <span class="font-black text-xs tracking-wider" id="childSosBtnText">استغاثة طارئة</span>
+                <span class="font-bold text-[10px] text-red-200">SOS</span>
+              </button>
+            </div>
+            <p class="text-[11px] text-slate-500 text-center mt-3 px-2" id="sosInstructionText">
+              اضغط الزر لإرسال إحداثيات موقعك وصفارة إنذار فورية لحساب الأب
+            </p>
+          </div>
+
+          <!-- Telemetry info -->
+          <div class="bg-white p-2 rounded-xl border border-slate-200 flex justify-around text-xs text-slate-600 shadow-sm">
+            <div class="flex items-center gap-1.5">
+              <span>🔋</span>
+              <span class="font-bold text-slate-800">85%</span>
+            </div>
+            <div class="w-px h-4 bg-slate-200"></div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-green-600 font-bold">●</span>
+              <span>GPS: نشط</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let isArabic = true;
+    let isSosActive = false;
+    let isBedtime = false;
+    let isInstantLocked = false;
+    let isWebFilterActive = false;
+
+    const translations = {
+
+      ar: {
+        headerTitle: "KidShield — تجربة المحاكاة التفاعلية (Web Safety & Activity)",
+        headerSubtitle: "تحكم اختياري من الأب + تتبع نشاط المواقع المفتوحة لحظياً (Live Sync)",
+        langBtnText: "English",
+        resetBtnText: "إعادة تعيين",
+        parentDeviceLabel: "📱 لوحة تحكم الأب (Parent Dashboard)",
+        childDeviceLabel: "📱 جهاز الطفل (Child Device)",
+        parentAppTitle: "حماية الطفل | الأب",
+        childAppTitle: "KidShield | جهاز الطفل",
+        shieldStateBadge: "محمي 🔒",
+        bedtimeLockLabel: "🌙 قفل وقت النوم (Bedtime Lock):",
+        instantLockLabel: "🔒 القفل الفوري للجهاز:",
+        adultFilterLabel: "🛡️ حظر المواقع غير اللائقة والإباحية:",
+        adultFilterSub: "تفعيل اختياري في أي وقت",
+        webLogTitle: "سجل نشاط المواقع المفتوحة",
+        protectionBadgeTitle: "درع الحماية نشط ومباشر",
+        protectionBadgeDesc: "الموقع الجغرافي ونشاط التصفح متزامنان مع الأب.",
+        browserBoxTitle: "محاكاة متصفح هاتف الطفل:",
+        childSosBtnText: "استغاثة طارئة",
+        sosInstructionText: "اضغط الزر لإرسال إحداثيات موقعك وصفارة إنذار فورية لحساب الأب",
+        sosBannerTitle: "إنذار استغاثة طارئ (SOS)!",
+        sosBannerDesc: "أرسلت سارة نداء استغاثة عاجل مع موقعها الجغرافي!",
+        silenceSirenBtn: "إيقاف صفارة الإنذار وتأكيد الاستلام",
+        lockedTitle: "الجهاز مقفل (وقت النوم)",
+        lockedDesc: "هذا الجهاز مقفل حالياً بموجب إعدادات الأمان الأبوية. حان وقت النوم أو الدراسة!",
+      },
+      en: {
+        headerTitle: "KidShield — Interactive Simulation (Web Safety & Activity)",
+        headerSubtitle: "Optional parent toggle + real-time website activity logging (Live Sync)",
+        langBtnText: "العربية",
+        resetBtnText: "Reset",
+        parentDeviceLabel: "📱 Parent Dashboard (لوحة تحكم الأب)",
+        childDeviceLabel: "📱 Child Device (جهاز الطفل)",
+        parentAppTitle: "KidShield | Parent",
+        childAppTitle: "KidShield | Child",
+        shieldStateBadge: "Protected 🔒",
+        bedtimeLockLabel: "🌙 Bedtime Lock:",
+        instantLockLabel: "🔒 Instant Remote Lock:",
+        adultFilterLabel: "🛡️ Block Adult & Inappropriate Content:",
+        adultFilterSub: "Optional toggle anytime",
+        webLogTitle: "Visited Websites Activity Log",
+        protectionBadgeTitle: "Protection Shield Active",
+        protectionBadgeDesc: "Live GPS & web browsing synced with parent.",
+        browserBoxTitle: "Child Browser Simulation:",
+        childSosBtnText: "EMERGENCY",
+        sosInstructionText: "Press button to trigger instant siren & GPS alert on parent dashboard",
+        sosBannerTitle: "🚨 EMERGENCY SOS ALERT! 🚨",
+        sosBannerDesc: "Sarah triggered an emergency alert with live GPS coordinates!",
+        silenceSirenBtn: "Silence Siren & Acknowledge",
+        lockedTitle: "Device Locked (Bedtime / Limits)",
+        lockedDesc: "This device is restricted by parental controls. Time to sleep or study!",
+      }
+    };
+
+    function toggleLanguage() {
+      isArabic = !isArabic;
+      document.documentElement.dir = isArabic ? "rtl" : "ltr";
+      document.documentElement.lang = isArabic ? "ar" : "en";
+      applyTranslations();
+    }
+
+    function applyTranslations() {
+      const t = isArabic ? translations.ar : translations.en;
+      for (const [id, text] of Object.entries(t)) {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+      }
+    }
+
+    function toggleWebFilter(val) {
+      isWebFilterActive = val;
+      const statusText = val
+        ? (isArabic ? '✅ تم تفعيل حظر المواقع غير اللائقة' : '✅ Adult content blocking enabled')
+        : (isArabic ? '⚠️ تم إيقاف حظر المواقع غير اللائقة (السماح بالتصفح)' : '⚠️ Adult content blocking disabled');
+      alert(statusText);
+    }
+
+    function quickTestSite(domain, isAdult) {
+      document.getElementById('browserInputUrl').value = domain;
+      simulateVisitWebsite(isAdult);
+    }
+
+    function simulateVisitWebsite(forceAdult) {
+      const urlInput = document.getElementById('browserInputUrl').value.trim().toLowerCase();
+      if (!urlInput) return;
+
+      const isAdultSite = forceAdult !== undefined
+        ? forceAdult
+        : (urlInput.includes('adult') || urlInput.includes('restricted') || urlInput.includes('xxx') || urlInput.includes('porn'));
+
+      const notice = document.getElementById('browserNotice');
+      notice.classList.remove('hidden');
+
+      if (isAdultSite && isWebFilterActive) {
+        // Blocked by Parental Control
+        notice.className = "mt-2 p-2 rounded text-[11px] bg-red-100 text-red-800 border border-red-300 font-bold";
+        notice.innerHTML = isArabic
+          ? `🚫 <b>تم حظر الموقع:</b> "${urlInput}" محظور بموجب إعدادات الحماية الأبوية.`
+          : `🚫 <b>Website Blocked:</b> "${urlInput}" is blocked by parental controls.`;
+
+        addWebLogEntry(urlInput, "محتوى غير لائق (محظور)", true);
+      } else {
+        // Allowed
+        notice.className = "mt-2 p-2 rounded text-[11px] bg-green-100 text-green-800 border border-green-300";
+        notice.innerHTML = isArabic
+          ? `✅ <b>تم فتح الموقع:</b> جاري تصفح "${urlInput}" وتسجيل النشاط في لوحة الأب.`
+          : `✅ <b>Site Opened:</b> Browsing "${urlInput}" and logging to parent dashboard.`;
+
+        addWebLogEntry(urlInput, "تصفح عام", false);
+      }
+    }
+
+    function addWebLogEntry(domain, desc, isBlocked) {
+      const list = document.getElementById('webLogList');
+      const item = document.createElement('div');
+      item.className = isBlocked
+        ? "p-2 rounded-lg bg-red-50 border border-red-200 flex items-center justify-between"
+        : "p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between";
+
+      item.innerHTML = `
+        <div class="flex items-center gap-2">
+          <span class="text-base">${isBlocked ? '🚫' : '🌐'}</span>
+          <div>
+            <span class="font-bold ${isBlocked ? 'text-red-700' : 'text-slate-800'} block">${domain}</span>
+            <span class="text-[10px] ${isBlocked ? 'text-red-500' : 'text-slate-500'}">${desc}</span>
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="text-[10px] ${isBlocked ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'} font-bold px-1.5 py-0.5 rounded">
+            ${isBlocked ? (isArabic ? 'محظور ⚠️' : 'Blocked ⚠️') : (isArabic ? 'مسموح' : 'Allowed')}
+          </span>
+          <span class="block text-[9px] text-slate-400 mt-0.5">${isArabic ? 'الآن' : 'Just now'}</span>
+        </div>
+      `;
+      list.insertBefore(item, list.firstChild);
+    }
+
+    function triggerChildSos() {
+      isSosActive = true;
+      document.getElementById('parentSosBanner').classList.remove('hidden');
+      alert(isArabic ? '🚨 تم إرسال نداء الاستغاثة وصفارة الإنذار للأب!' : '🚨 SOS Alert and Siren sent to Parent Dashboard!');
+    }
+
+    function dismissSosAlert() {
+      isSosActive = false;
+      document.getElementById('parentSosBanner').classList.add('hidden');
+    }
+
+    function toggleBedtimeLock(val) {
+      isBedtime = val;
+      document.getElementById('bedtimeToggle').checked = val;
+      updateChildOverlay();
+    }
+
+    function toggleInstantLock(val) {
+      isInstantLocked = val;
+      document.getElementById('instantLockToggle').checked = val;
+      updateChildOverlay();
+    }
+
+    function updateChildOverlay() {
+      const overlay = document.getElementById('childLockOverlay');
+      if (isBedtime || isInstantLocked) {
+        overlay.classList.remove('hidden');
+      } else {
+        overlay.classList.add('hidden');
+      }
+    }
+
+    function resetSimulation() {
+      dismissSosAlert();
+      toggleBedtimeLock(false);
+      toggleInstantLock(false);
+      isWebFilterActive = false;
+      document.getElementById('webFilterToggle').checked = false;
+      document.getElementById('browserNotice').classList.add('hidden');
+    }
+
+  </script>
+</body>
+</html>
