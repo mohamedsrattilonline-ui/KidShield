@@ -1,0 +1,54 @@
+name: kids_safety_app
+description: "A cross-platform Parental Control & Child Safety application with Firebase backend."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management & DI
+  provider: ^6.1.2
+
+  # Firebase Core & Services
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+
+  # Real-Time Location & Maps
+  geolocator: ^13.0.1
+  google_maps_flutter: ^2.10.0
+  google_maps_flutter_web: ^0.5.10
+  latlong2: ^0.9.1
+
+  # Battery & Device State
+  battery_plus: ^6.1.1
+  device_info_plus: ^11.1.0
+
+  # Pairing & Barcode
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.2.3
+
+  # Audio & Alerts (SOS siren playback)
+  audioplayers: ^6.1.0
+
+  # Persistence & Utilities
+  shared_preferences: ^2.3.2
+  intl: ^0.19.0
+  uuid: ^4.5.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/sounds/
+    - assets/images/

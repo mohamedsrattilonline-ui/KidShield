@@ -1,0 +1,23 @@
+{
+    "name": "KidShield Safety",
+    "short_name": "KidShield",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#F8F9FA",
+    "theme_color": "#1E88E5",
+    "description": "Parental Control & Child Safety application",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
