@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KidShield | بوابة تحميل وتثبيت تطبيق حماية الطفل والرقابة الأبوية</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    .float-anim {
+      animation: float 4s ease-in-out infinite;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+    .gradient-hero {
+      background: radial-gradient(circle at top right, #e0f2fe 0%, #f8fafc 50%, #eff6ff 100%);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 glass-card border-b border-slate-200/80 px-4 py-3 shadow-xs">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-black text-xl shadow-md">
+          🛡️
+        </div>
+        <div>
+          <span class="text-lg font-black text-slate-900 tracking-tight">KidShield</span>
+          <span class="text-xs text-blue-600 font-bold block" id="navSubtitle">حماية الطفل والرقابة الأبوية</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="toggleLang()" class="px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-xs font-bold transition flex items-center gap-1.5 text-slate-700">
+          🌐 <span id="langBtn">English</span>
+        </button>
+        <a href="#downloadSection" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-sm hidden sm:inline-block">
+          <span id="quickDownloadNav">تحميل التطبيق الآن</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="gradient-hero py-12 px-4 border-b border-slate-200">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-100 text-blue-800 text-xs font-bold mb-4">
+        ✨ <span>الجيل الجديد للحماية الأبوية والتحكم العائلي</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-slate-950 mb-4 leading-tight" id="heroTitle">
+        تطبيق واحد يحمي أطفالك،<br class="hidden sm:inline"> ويمنحك راحة البال التامة
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed" id="heroDesc">
+        اختر نوع جهازك وحدد دورك في العائلة (هاتف الأب أو هاتف الطفل)، وقم بتثبيت التطبيق مباشرة بخطوات بسيطة تدعم كافة هواتف أندرويد وآيفون وأجهزة الكمبيوتر.
+      </p>
+
+      <!-- Auto Device Detected Badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border border-blue-200 shadow-sm text-xs font-semibold text-slate-700">
+        <span>جهازك المكتشف حالياً:</span>
+        <span id="detectedBadge" class="text-blue-600 font-black">جاري التعرف على نوع الجهاز...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Download Hub -->
+  <main id="downloadSection" class="flex-1 max-w-5xl mx-auto px-4 py-10 w-full space-y-12">
+
+    <!-- Step 1: Select Role (Parent vs Child) -->
+    <section>
+      <div class="text-center mb-6">
+        <span class="text-xs font-black text-blue-600 uppercase tracking-wider" id="step1Header">الخطوة الأولى</span>
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1" id="step1Title">1. من سيستخدم هذا الهاتف؟</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+        <!-- Parent Role Option -->
+        <label class="cursor-pointer">
+          <input type="radio" name="userRole" value="parent" checked onchange="updateRole(this.value)" class="sr-only peer">
+          <div class="p-5 rounded-2xl border-2 border-slate-200 peer-checked:border-blue-600 peer-checked:bg-blue-50/50 bg-white shadow-sm transition hover:border-slate-300 flex items-start gap-3">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl font-bold shrink-0">
+              👨‍👩‍👧
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900" id="parentRoleTitle">جهاز الأب / ولي الأمر</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed" id="parentRoleDesc">
+                لوحة التحكم لمتابعة الموقع المباشر، تعيين مواعيد النوم، وتلقي استغاثات الطوارئ SOS.
+              </p>
+            </div>
+          </div>
+        </label>
+
+        <!-- Child Role Option -->
+        <label class="cursor-pointer">
+          <input type="radio" name="userRole" value="child" onchange="updateRole(this.value)" class="sr-only peer">
+          <div class="p-5 rounded-2xl border-2 border-slate-200 peer-checked:border-green-600 peer-checked:bg-green-50/50 bg-white shadow-sm transition hover:border-slate-300 flex items-start gap-3">
+            <div class="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center text-2xl font-bold shrink-0">
+              👶
+            </div>
+            <div>
+              <h3 class="font-bold text-base text-slate-900" id="childRoleTitle">جهاز الطفل / الابن</h3>
+              <p class="text-xs text-slate-500 mt-1 leading-relaxed" id="childRoleDesc">
+                تفعيل درع الحماية، تحديث الـ GPS التلقائي، وزر الاستغاثة الطارئ الكبير.
+              </p>
+            </div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <!-- Step 2: Select Operating System & Download -->
+    <section>
+      <div class="text-center mb-6">
+        <span class="text-xs font-black text-blue-600 uppercase tracking-wider" id="step2Header">الخطوة الثانية</span>
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 mt-1" id="step2Title">2. اختر نوع نظام تشغيل هاتفك</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Card 1: Android (APK Direct Download) -->
+        <div id="androidCard" class="bg-white rounded-3xl p-6 border-2 border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-3xl font-black mb-4">
+              🤖
+            </div>
+            <h3 class="text-lg font-black text-slate-900 mb-1">أندرويد (Android)</h3>
+            <p class="text-xs text-slate-500 mb-4" id="androidSubtitle">سامسونج، شاومي، هواوي، أوبو، وكافة هواتف أندرويد</p>
+
+            <div class="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 mb-6 space-y-1.5 border border-slate-100">
+              <div class="flex items-center gap-1.5">
+                <span class="text-green-600">✓</span> <span>تثبيت مباشر وسريع عبر ملف APK</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-green-600">✓</span> <span>يدعم أندرويد 8.0 وحتى أندرويد 15</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-green-600">✓</span> <span>الحجم: ~28 ميجابايت فقط</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button onclick="downloadAndroidApk()" class="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2">
+              <span>📥</span> <span id="androidBtnText">تحميل ملف APK مباشر</span>
+            </button>
+            <button onclick="showAndroidGuide()" class="w-full mt-2 py-2 text-xs text-slate-600 font-bold hover:text-green-700 hover:underline text-center">
+              📖 خطوات التثبيت على الأندرويد
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 2: iPhone / iOS -->
+        <div id="iosCard" class="bg-white rounded-3xl p-6 border-2 border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-3xl font-black mb-4">
+              🍏
+            </div>
+            <h3 class="text-lg font-black text-slate-900 mb-1">آيفون وآيباد (iOS)</h3>
+            <p class="text-xs text-slate-500 mb-4" id="iosSubtitle">كافة أجهزة Apple iPhone و iPad</p>
+
+            <div class="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 mb-6 space-y-1.5 border border-slate-100">
+              <div class="flex items-center gap-1.5">
+                <span class="text-blue-600">✓</span> <span>تطبيق ويب ذكي (PWA) فوري</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-blue-600">✓</span> <span>إضافة للشاشة الرئيسية بضغطة واحدة</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-blue-600">✓</span> <span>أو تثبيت عبر Xcode من جهاز Mac</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button onclick="openIosPwa()" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2">
+              <span>📲</span> <span id="iosBtnText">تثبيت فوري على الآيفون (PWA)</span>
+            </button>
+            <button onclick="showIosGuide()" class="w-full mt-2 py-2 text-xs text-slate-600 font-bold hover:text-slate-900 hover:underline text-center">
+              📖 كيفية التثبيت على الآيفون
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 3: Web & Computer (Chrome / Safari / Windows) -->
+        <div id="webCard" class="bg-white rounded-3xl p-6 border-2 border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+          <div>
+            <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-3xl font-black mb-4">
+              💻
+            </div>
+            <h3 class="text-lg font-black text-slate-900 mb-1">المتصفح والكمبيوتر</h3>
+            <p class="text-xs text-slate-500 mb-4" id="webSubtitle">Google Chrome، Safari، Windows، وMac</p>
+
+            <div class="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 mb-6 space-y-1.5 border border-slate-100">
+              <div class="flex items-center gap-1.5">
+                <span class="text-blue-600">✓</span> <span>يعمل مباشرة دون الحاجة لتنزيل أي ملف</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-blue-600">✓</span> <span>لوحة تحكم الأب بشاشة كاملة ومريحة</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-blue-600">✓</span> <span>تتبع حي على الخريطة وسجل التصفح</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <button onclick="openLiveApp()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2">
+              <span>🚀</span> <span id="webBtnText">تشغيل لوحة التحكم فوراً</span>
+            </button>
+            <span class="block mt-2 py-2 text-xs text-slate-400 text-center">
+              تجربة مباشرة وسريعة
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Visual Installation Guides Modal / Accordion -->
+    <section class="bg-white rounded-3xl p-6 border border-slate-200 shadow-xs">
+      <h3 class="font-bold text-base text-slate-900 mb-4 flex items-center gap-2">
+        <span>💡</span> <span>دليل التثبيت السريع خطوة بخطوة:</span>
+      </h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <!-- Android Guide -->
+        <div class="p-4 rounded-2xl bg-green-50/60 border border-green-200">
+          <h4 class="font-bold text-green-900 mb-2 text-sm flex items-center gap-1.5">
+            <span>🤖</span> <span>لهواتف الأندرويد:</span>
+          </h4>
+          <ol class="list-decimal list-inside space-y-1.5 text-slate-700">
+            <li>اضغط زر <b>"تحميل ملف APK"</b> الأخضر أعلاه.</li>
+            <li>افتح الملف بعد اكتمال التنزيل واضغط <b>تثبيت (Install)</b>.</li>
+            <li>إذا ظهرت رسالة أمان، اضغط <b>"السماح بالتثبيت من هذا المصدر"</b>.</li>
+            <li>افتح التطبيق واختر (لوحة الأب) على هاتفك، أو (جهاز الطفل) على هاتف ابنك.</li>
+          </ol>
+        </div>
+
+        <!-- iOS Guide -->
+        <div class="p-4 rounded-2xl bg-blue-50/60 border border-blue-200">
+          <h4 class="font-bold text-blue-900 mb-2 text-sm flex items-center gap-1.5">
+            <span>🍏</span> <span>لهواتف الآيفون (iOS):</span>
+          </h4>
+          <ol class="list-decimal list-inside space-y-1.5 text-slate-700">
+            <li>افتح هذا الرابط من متصفح <b>Safari</b> على الآيفون.</li>
+            <li>اضغط على زر <b>المشاركة (Share / ⬆️)</b> أسفل المتصفح.</li>
+            <li>اختر <b>"إضافة إلى الشاشة الرئيسية (Add to Home Screen)"</b>.</li>
+            <li>سيظهر التطبيق بأيقونة أنيقة على شاشة جهازك ويعمل كتطبيق أصلي كامل!</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 px-4 text-center text-xs text-slate-500 mt-auto">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span class="font-black text-slate-800">KidShield Protection</span>
+        <span>•</span>
+        <span>نسخة الإنتاج العائلي v1.0.0</span>
+      </div>
+      <p>مدعوم سحابياً بواسطة Google Cloud & Firebase (بدون الحاجة لأي سيرفرات خارجية)</p>
+    </div>
+  </footer>
+
+  <script>
+    let currentRole = "parent";
+    let isArabic = true;
+
+    // Detect Device OS
+    function detectOS() {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      let badge = "جهاز كمبيوتر / متصفح";
+      let isAndroid = false;
+      let isIOS = false;
+
+      if (/android/i.test(userAgent)) {
+        badge = "هاتف أندرويد (Android Phone)";
+        isAndroid = true;
+      } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        badge = "هاتف آيفون / آيباد (Apple iOS)";
+        isIOS = true;
+      } else if (/Macintosh|Mac OS X/.test(userAgent)) {
+        badge = "كمبيوتر آبل ماك (macOS)";
+      } else if (/Windows/.test(userAgent)) {
+        badge = "كمبيوتر ويندوز (Windows PC)";
+      }
+
+      document.getElementById('detectedBadge').innerText = badge;
+
+      // Highlight recommended card
+      if (isAndroid) {
+        document.getElementById('androidCard').classList.add('ring-4', 'ring-green-400');
+      } else if (isIOS) {
+        document.getElementById('iosCard').classList.add('ring-4', 'ring-blue-400');
+      } else {
+        document.getElementById('webCard').classList.add('ring-4', 'ring-blue-400');
+      }
+    }
+
+    function updateRole(role) {
+      currentRole = role;
+      const roleText = (role === "parent")
+        ? (isArabic ? "لوحة الأب" : "Parent Dashboard")
+        : (isArabic ? "جهاز الطفل" : "Child Device");
+
+      document.getElementById('androidBtnText').innerText = isArabic
+        ? `تحميل APK (${roleText})`
+        : `Download APK (${roleText})`;
+
+      document.getElementById('iosBtnText').innerText = isArabic
+        ? `تثبيت فوري (${roleText})`
+        : `Install (${roleText})`;
+    }
+
+    function downloadAndroidApk() {
+      // Trigger browser download for KidShield.apk
+      const link = document.createElement('a');
+      link.href = 'KidShield.apk';
+      link.download = 'KidShield.apk';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      alert(isArabic
+        ? `📥 بدأ تنزيل ملف (KidShield.apk) لجهازك!\n\nبعد اكتمال التنزيل:\n1. افتح الملف من الإشعارات أو مجلد التنزيلات.\n2. اضغط "تثبيت (Install)".\n3. افتح التطبيق واختر دورك (${currentRole === 'parent' ? 'لوحة الأب' : 'جهاز الطفل'}).`
+        : `📥 Downloading (KidShield.apk)!\n\nAfter download finishes:\n1. Open file from Downloads.\n2. Tap "Install".\n3. Open app and select (${currentRole === 'parent' ? 'Parent' : 'Child'}).`);
+    }
+
+
+    function openIosPwa() {
+      alert(isArabic
+        ? "📲 لتثبيت التطبيق على الآيفون فوراً:\nاضغط زر المشاركة (⬆️) في متصفح Safari ثم اختر 'إضافة إلى الشاشة الرئيسية (Add to Home Screen)'."
+        : "📲 To install on iPhone:\nTap Share (⬆️) in Safari and tap 'Add to Home Screen'.");
+      window.location.href = "preview.html";
+    }
+
+    function openLiveApp() {
+      window.location.href = "preview.html";
+    }
+
+
+    function showAndroidGuide() {
+      alert(isArabic
+        ? "خطوات الأندرويد:\n1. حمل ملف الـ APK\n2. اضغط عليه في التنزيلات\n3. وافق على التثبيت وافتحه فوراً"
+        : "Android Steps:\n1. Download APK\n2. Open in Downloads\n3. Tap Install and Open");
+    }
+
+    function showIosGuide() {
+      alert(isArabic
+        ? "خطوات الآيفون:\n1. افتح الموقع من Safari على الآيفون\n2. اضغط زر المشاركة ⬆️\n3. اختر 'إضافة إلى الشاشة الرئيسية'"
+        : "iPhone Steps:\n1. Open in Safari on iPhone\n2. Tap Share ⬆️\n3. Tap 'Add to Home Screen'");
+    }
+
+    function toggleLang() {
+      isArabic = !isArabic;
+      document.documentElement.dir = isArabic ? "rtl" : "ltr";
+      document.documentElement.lang = isArabic ? "ar" : "en";
+      document.getElementById('langBtn').innerText = isArabic ? "English" : "العربية";
+
+      if (!isArabic) {
+        document.getElementById('navSubtitle').innerText = "Parental Control & Child Safety";
+        document.getElementById('quickDownloadNav').innerText = "Download App Now";
+        document.getElementById('heroTitle').innerHTML = "One app to protect your kids,<br class='hidden sm:inline'> and give you complete peace of mind";
+        document.getElementById('heroDesc').innerText = "Select your device and your role in the family (Parent or Child), and install the app seamlessly on Android, iPhone, and PC.";
+        document.getElementById('step1Title').innerText = "1. Who will use this device?";
+        document.getElementById('step2Title').innerText = "2. Select your device platform";
+        document.getElementById('parentRoleTitle').innerText = "Parent Device (لوحة الأب)";
+        document.getElementById('childRoleTitle').innerText = "Child Device (جهاز الطفل)";
+      } else {
+        document.getElementById('navSubtitle').innerText = "حماية الطفل والرقابة الأبوية";
+        document.getElementById('quickDownloadNav').innerText = "تحميل التطبيق الآن";
+        document.getElementById('heroTitle').innerHTML = "تطبيق واحد يحمي أطفالك،<br class='hidden sm:inline'> ويمنحك راحة البال التامة";
+        document.getElementById('heroDesc').innerText = "اختر نوع جهازك وحدد دورك في العائلة (هاتف الأب أو هاتف الطفل)، وقم بتثبيت التطبيق مباشرة بخطوات بسيطة تدعم كافة هواتف أندرويد وآيفون وأجهزة الكمبيوتر.";
+        document.getElementById('step1Title').innerText = "1. من سيستخدم هذا الهاتف؟";
+        document.getElementById('step2Title').innerText = "2. اختر نوع نظام تشغيل هاتفك";
+        document.getElementById('parentRoleTitle').innerText = "جهاز الأب / ولي الأمر";
+        document.getElementById('childRoleTitle').innerText = "جهاز الطفل / الابن";
+      }
+      updateRole(currentRole);
+    }
+
+    window.onload = detectOS;
+  </script>
+</body>
+</html>
