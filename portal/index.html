@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KidShield | بوابة تحميل وتثبيت تطبيق حماية الطفل والرقابة الأبوية</title>
-  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes float {
       0%, 100% { transform: translateY(0px); }
@@ -39,12 +39,12 @@
       </div>
 
       <div class="flex items-center gap-2">
+        <a href="preview.html" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center gap-1.5">
+          <span>🚀</span> <span>تشغيل التطبيق فوراً</span>
+        </a>
         <button onclick="toggleLang()" class="px-3 py-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-xs font-bold transition flex items-center gap-1.5 text-slate-700">
           🌐 <span id="langBtn">English</span>
         </button>
-        <a href="#downloadSection" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-sm hidden sm:inline-block">
-          <span id="quickDownloadNav">تحميل التطبيق الآن</span>
-        </a>
       </div>
     </div>
   </nav>
@@ -59,13 +59,23 @@
         تطبيق واحد يحمي أطفالك،<br class="hidden sm:inline"> ويمنحك راحة البال التامة
       </h1>
       <p class="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto mb-8 leading-relaxed" id="heroDesc">
-        اختر نوع جهازك وحدد دورك في العائلة (هاتف الأب أو هاتف الطفل)، وقم بتثبيت التطبيق مباشرة بخطوات بسيطة تدعم كافة هواتف أندرويد وآيفون وأجهزة الكمبيوتر.
+        اختر نوع جهازك وحدد دورك في العائلة (هاتف الأب أو هاتف الطفل)، وقم بتشغيل أو تثبيت التطبيق مباشرة بخطوات بسيطة تدعم كافة هواتف أندرويد وآيفون وأجهزة الكمبيوتر.
       </p>
 
       <!-- Auto Device Detected Badge -->
       <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border border-blue-200 shadow-sm text-xs font-semibold text-slate-700">
         <span>جهازك المكتشف حالياً:</span>
         <span id="detectedBadge" class="text-blue-600 font-black">جاري التعرف على نوع الجهاز...</span>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <a href="preview.html" class="px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-sm shadow-lg shadow-blue-500/25 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+          <span>🚀</span> <span>تشغيل وتجربة التطبيق مباشرة الآن (Live Demo)</span>
+        </a>
+        <a href="#downloadSection" class="px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 rounded-2xl font-bold text-sm shadow-xs transition flex items-center gap-2">
+          <span>📥</span> <span>تحميل التطبيق على الهواتف</span>
+        </a>
       </div>
     </div>
   </header>
@@ -323,17 +333,14 @@
     }
 
     function downloadAndroidApk() {
-      // Trigger browser download for KidShield.apk
-      const link = document.createElement('a');
-      link.href = 'KidShield.apk';
-      link.download = 'KidShield.apk';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      alert(isArabic
-        ? `📥 بدأ تنزيل ملف (KidShield.apk) لجهازك!\n\nبعد اكتمال التنزيل:\n1. افتح الملف من الإشعارات أو مجلد التنزيلات.\n2. اضغط "تثبيت (Install)".\n3. افتح التطبيق واختر دورك (${currentRole === 'parent' ? 'لوحة الأب' : 'جهاز الطفل'}).`
-        : `📥 Downloading (KidShield.apk)!\n\nAfter download finishes:\n1. Open file from Downloads.\n2. Tap "Install".\n3. Open app and select (${currentRole === 'parent' ? 'Parent' : 'Child'}).`);
+      const choice = confirm(isArabic
+        ? `📲 هل ترغب في فتح وتشغيل التطبيق الآن مباشرة في المتصفح؟\n\nاضغط [موافق / OK] للتشغيل الفوري بدون انتظار.\nاضغط [إلغاء / Cancel] لتحميل حزمة المشروع الكاملة (ZIP).`
+        : `📲 Would you like to run the app immediately in your browser?\n\nClick [OK] to launch directly.\nClick [Cancel] to download project package (ZIP).`);
+      if (choice) {
+        window.location.href = "preview.html";
+      } else {
+        window.open("https://github.com/mohamedsrattilonline-ui/KidShield/archive/refs/heads/main.zip", "_blank");
+      }
     }
 
 
